@@ -1,0 +1,12 @@
+parameters:
+  level: max
+  paths:
+    - functions.php
+    - plugin.php
+    - includes
+  scanFiles:
+    - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+    - tools/phpstan-stubs/wordpress-7.0.php
+  treatPhpDocTypesAsCertain: false
+includes:
+  - vendor/szepeviktor/phpstan-wordpress/extension.neon

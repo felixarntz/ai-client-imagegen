@@ -1,0 +1,4 @@
+{
+	"core": "https://wordpress.org/wordpress-7.0-beta3.zip",
+	"plugins": [ "." ]
+}

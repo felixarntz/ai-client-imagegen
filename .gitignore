@@ -1,0 +1,52 @@
+############
+## Vendor
+############
+
+node_modules/
+vendor/
+
+############
+## Build
+############
+
+build/
+
+############
+## OSes
+############
+
+[Tt]humbs.db
+[Dd]esktop.ini
+*.DS_store
+.DS_store?
+
+############
+## AI Tools
+############
+
+.claude/
+.clinerules
+.clinerules/
+.codex/
+.cursor/
+.gemini/
+.windsurf/
+CLAUDE.md
+GEMINI.md
+
+############
+## PHPUnit
+############
+
+.phpunit.cache/
+.phpunit.result.cache
+
+############
+## IDEs
+############
+
+.idea/
+.vscode/
+
+# opensrc - source code for packages
+opensrc/

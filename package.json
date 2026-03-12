@@ -1,0 +1,22 @@
+{
+	"name": "ai-client-imagegen",
+	"private": true,
+	"license": "GPL-2.0-or-later",
+	"repository": "git+https://github.com/felixarntz/ai-client-imagegen.git",
+	"workspaces": [
+		"packages/*"
+	],
+	"devDependencies": {
+		"@wordpress/env": "^10.27.0",
+		"@wordpress/scripts": "^31.0.0",
+		"typescript": "^5.8.2"
+	},
+	"scripts": {
+		"build": "wp-scripts build",
+		"format-js": "wp-scripts format",
+		"lint-js": "wp-scripts lint-js",
+		"lint-php": "wp-env run cli --env-cwd=wp-content/plugins/$(basename $(pwd)) composer lint",
+		"typecheck": "tsc --noEmit",
+		"wp-env": "wp-env"
+	}
+}
