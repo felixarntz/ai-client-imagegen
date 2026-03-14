@@ -1,7 +1,6 @@
 parameters:
   level: max
   paths:
-    - functions.php
     - plugin.php
     - includes
   scanFiles:

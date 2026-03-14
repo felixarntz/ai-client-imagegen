@@ -1,4 +1,4 @@
 {
-	"core": "https://wordpress.org/wordpress-7.0-beta3.zip",
+	"core": "https://wordpress.org/wordpress-7.0-beta5.zip",
 	"plugins": [ "." ]
 }

@@ -3,7 +3,6 @@
 	<description>WordPress Coding Standards for the AI Client ImageGen WordPress Plugin</description>
 
     <!-- Scan these files -->
-	<file>functions.php</file>
 	<file>plugin.php</file>
     <file>includes</file>
 

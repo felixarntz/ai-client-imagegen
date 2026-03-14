@@ -19,10 +19,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-require_once __DIR__ . '/functions.php';
+if ( ! function_exists( 'aicig_has_ai_client' ) ) {
+	/**
+	 * Checks whether the current WordPress version natively provides the AI client.
+	 *
+	 * @since n.e.x.t
+	 * @access private
+	 *
+	 * @return bool True if WordPress 7.0+ is present with a native AI client.
+	 */
+	function aicig_has_ai_client() {
+		return function_exists( 'wp_get_wp_version' ) && version_compare( wp_get_wp_version(), '7.0-alpha', '>=' );
+	}
+}
 
 if ( aicig_has_ai_client() ) {
-	// TODO: Add hooks here.
+	require_once __DIR__ . '/includes/prompt.php';
+	require_once __DIR__ . '/includes/rest-api.php';
+	require_once __DIR__ . '/includes/admin.php';
+
+	add_action( 'rest_api_init', 'aicig_register_rest_routes' );
+	add_action( 'init', 'aicig_register_assets' );
+	add_action( 'admin_enqueue_scripts', 'aicig_enqueue_media_assets' );
 } else {
 	add_action(
 		'admin_notices',
