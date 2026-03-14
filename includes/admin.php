@@ -52,6 +52,10 @@ function aicig_enqueue_media_assets( string $hook_suffix ): void {
 		return;
 	}
 
+	if ( ! current_user_can( 'upload_files' ) ) {
+		return;
+	}
+
 	if ( ! aicig_get_image_generation_prompt( 'test' )->is_supported_for_image_generation() ) {
 		add_action( 'admin_notices', 'aicig_show_unsupported_notice' );
 		return;
