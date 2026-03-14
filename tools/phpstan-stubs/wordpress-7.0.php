@@ -233,6 +233,6 @@ namespace {
 	 *
 	 * @return WP_AI_Client_Prompt_Builder
 	 */
-	function wp_ai_client_prompt_builder(): WP_AI_Client_Prompt_Builder {
+	function wp_ai_client_prompt(): WP_AI_Client_Prompt_Builder {
 	}
 }

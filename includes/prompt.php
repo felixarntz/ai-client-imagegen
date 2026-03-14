@@ -19,7 +19,7 @@ use WordPress\AiClient\Files\Enums\MediaOrientationEnum;
  * @return WP_AI_Client_Prompt_Builder The configured prompt builder instance.
  */
 function aicig_get_image_generation_prompt( string $prompt, string $orientation = '' ): WP_AI_Client_Prompt_Builder {
-	$builder = wp_ai_client_prompt_builder()
+	$builder = wp_ai_client_prompt()
 		->with_text( $prompt )
 		->as_output_file_type( FileTypeEnum::inline() );
 
@@ -41,7 +41,7 @@ function aicig_get_image_generation_prompt( string $prompt, string $orientation 
  * @return WP_AI_Client_Prompt_Builder The configured prompt builder instance.
  */
 function aicig_get_image_editing_prompt( string $prompt, File $image_file, string $orientation = '' ): WP_AI_Client_Prompt_Builder {
-	$builder = wp_ai_client_prompt_builder()
+	$builder = wp_ai_client_prompt()
 		->with_text( $prompt )
 		->with_file( $image_file )
 		->as_output_file_type( FileTypeEnum::inline() );
