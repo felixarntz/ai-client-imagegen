@@ -14,6 +14,70 @@ interface GenerateImageResponse {
 	} >;
 }
 
+interface UploadImageResponse {
+	id: number;
+	url: string;
+}
+
+/**
+ * Extracts a human-readable error message from an unknown error value.
+ *
+ * @since n.e.x.t
+ *
+ * @param error    - The caught error value.
+ * @param fallback - Fallback message if none can be extracted.
+ * @return The error message string.
+ */
+function getErrorMessage( error: unknown, fallback: string ): string {
+	if (
+		error instanceof Error ||
+		( typeof error === 'object' &&
+			error !== null &&
+			'message' in error &&
+			typeof error.message === 'string' )
+	) {
+		return ( error as { message: string } ).message;
+	}
+	return fallback;
+}
+
+/**
+ * Shows the notice element with the given message and type.
+ *
+ * @since n.e.x.t
+ *
+ * @param params         - Display parameters.
+ * @param params.notice  - The notice div element.
+ * @param params.message - The message to display.
+ * @param params.type    - The notice type.
+ */
+function showNotice( {
+	notice,
+	message,
+	type,
+}: {
+	notice: HTMLDivElement;
+	message: string;
+	type: 'error' | 'success';
+} ): void {
+	notice.className = `notice inline notice-${ type }`;
+	notice.textContent = message;
+	notice.style.display = 'block';
+	notice.style.margin = '0';
+}
+
+/**
+ * Hides the notice element.
+ *
+ * @since n.e.x.t
+ *
+ * @param notice - The notice div element.
+ */
+function hideNotice( notice: HTMLDivElement ): void {
+	notice.style.display = 'none';
+	notice.textContent = '';
+}
+
 /**
  * Creates the image generation modal dialog element.
  *
@@ -27,6 +91,7 @@ function createModal(): {
 	submitButton: HTMLButtonElement;
 	notice: HTMLDivElement;
 	preview: HTMLImageElement;
+	saveButton: HTMLButtonElement;
 } {
 	const dialog = document.createElement( 'dialog' );
 	dialog.style.maxWidth = '640px';
@@ -123,10 +188,20 @@ function createModal(): {
 	preview.style.display = 'none';
 	preview.style.borderRadius = '4px';
 
+	const saveButton = document.createElement( 'button' );
+	saveButton.type = 'button';
+	saveButton.className = 'button button-primary';
+	saveButton.textContent = __(
+		'Save to Media Library',
+		'ai-client-imagegen'
+	);
+	saveButton.style.display = 'none';
+
 	inner.appendChild( header );
 	inner.appendChild( form );
 	inner.appendChild( notice );
 	inner.appendChild( preview );
+	inner.appendChild( saveButton );
 
 	dialog.appendChild( inner );
 	document.body.appendChild( dialog );
@@ -135,7 +210,7 @@ function createModal(): {
 		dialog.close();
 	} );
 
-	return { dialog, promptInput, submitButton, notice, preview };
+	return { dialog, promptInput, submitButton, notice, preview, saveButton };
 }
 
 /**
@@ -143,30 +218,36 @@ function createModal(): {
  *
  * @since n.e.x.t
  *
- * @param params         - Submission handler parameters.
- * @param params.prompt  - The text prompt value.
- * @param params.button  - The submit button element.
- * @param params.notice  - The error notice element.
- * @param params.preview - The preview image element.
+ * @param params             - Submission handler parameters.
+ * @param params.prompt      - The text prompt value.
+ * @param params.button      - The submit button element.
+ * @param params.notice      - The notice element.
+ * @param params.preview     - The preview image element.
+ * @param params.saveButton  - The save button element.
+ * @param params.onGenerated - Callback invoked with base64 data and mime type on success.
  */
 async function handleGenerate( {
 	prompt,
 	button,
 	notice,
 	preview,
+	saveButton,
+	onGenerated,
 }: {
 	prompt: string;
 	button: HTMLButtonElement;
 	notice: HTMLDivElement;
 	preview: HTMLImageElement;
+	saveButton: HTMLButtonElement;
+	onGenerated: ( base64Data: string, mimeType: string ) => void;
 } ): Promise< void > {
 	const originalText = button.textContent;
 	button.disabled = true;
 	button.textContent = __( 'Generating…', 'ai-client-imagegen' );
-	notice.style.display = 'none';
-	notice.textContent = '';
+	hideNotice( notice );
 	preview.style.display = 'none';
 	preview.removeAttribute( 'src' );
+	saveButton.style.display = 'none';
 
 	try {
 		const response = await apiFetch< GenerateImageResponse >( {
@@ -184,20 +265,98 @@ async function handleGenerate( {
 
 		preview.src = `data:${ file.mimeType };base64,${ file.base64Data }`;
 		preview.style.display = 'block';
+		saveButton.style.display = 'block';
+		onGenerated( file.base64Data, file.mimeType );
 	} catch ( error: unknown ) {
-		const message =
-			error instanceof Error ||
-			( typeof error === 'object' &&
-				error !== null &&
-				'message' in error &&
-				typeof error.message === 'string' )
-				? ( error.message as string )
-				: __(
-						'An error occurred while generating the image.',
-						'ai-client-imagegen'
-				  );
-		notice.textContent = message;
-		notice.style.display = 'block';
+		showNotice( {
+			notice,
+			message: getErrorMessage(
+				error,
+				__(
+					'An error occurred while generating the image.',
+					'ai-client-imagegen'
+				)
+			),
+			type: 'error',
+		} );
+	} finally {
+		button.textContent = originalText;
+		button.disabled = false;
+	}
+}
+
+/**
+ * Handles saving the generated image to the media library.
+ *
+ * @since n.e.x.t
+ *
+ * @param params            - Save handler parameters.
+ * @param params.base64Data - The base64-encoded image data.
+ * @param params.mimeType   - The image MIME type.
+ * @param params.button     - The save button element.
+ * @param params.notice     - The notice element.
+ * @param params.preview    - The preview image element.
+ */
+async function handleSave( {
+	base64Data,
+	mimeType,
+	button,
+	notice,
+	preview,
+}: {
+	base64Data: string;
+	mimeType: string;
+	button: HTMLButtonElement;
+	notice: HTMLDivElement;
+	preview: HTMLImageElement;
+} ): Promise< void > {
+	const originalText = button.textContent;
+	button.disabled = true;
+	button.textContent = __( 'Saving…', 'ai-client-imagegen' );
+	hideNotice( notice );
+
+	const ext = mimeType.split( '/' ).pop() || 'png';
+	const fileName = `ai-generated-image-${ Date.now() }.${ ext }`;
+
+	try {
+		await apiFetch< UploadImageResponse >( {
+			path: '/ai-client-imagegen/v1/upload-image',
+			method: 'POST',
+			data: {
+				image_base64: base64Data,
+				file_name: fileName,
+				mime_type: mimeType,
+			},
+		} );
+
+		preview.style.display = 'none';
+		preview.removeAttribute( 'src' );
+		button.style.display = 'none';
+		showNotice( {
+			notice,
+			message: __(
+				'Image saved to the media library.',
+				'ai-client-imagegen'
+			),
+			type: 'success',
+		} );
+
+		const mediaGrid = ( window as any ).wp?.media?.frame?.content?.get();
+		if ( mediaGrid?.collection ) {
+			mediaGrid.collection.props.set( { ignore: +new Date() } );
+		}
+	} catch ( error: unknown ) {
+		showNotice( {
+			notice,
+			message: getErrorMessage(
+				error,
+				__(
+					'An error occurred while saving the image.',
+					'ai-client-imagegen'
+				)
+			),
+			type: 'error',
+		} );
 	} finally {
 		button.textContent = originalText;
 		button.disabled = false;
@@ -218,8 +377,11 @@ if ( ! anchorButton ) {
 	);
 	anchorButton.after( generateButton );
 
-	const { dialog, promptInput, submitButton, notice, preview } =
+	const { dialog, promptInput, submitButton, notice, preview, saveButton } =
 		createModal();
+
+	let currentBase64 = '';
+	let currentMimeType = '';
 
 	generateButton.addEventListener( 'click', () => {
 		dialog.showModal();
@@ -239,6 +401,24 @@ if ( ! anchorButton ) {
 		handleGenerate( {
 			prompt: value,
 			button: submitButton,
+			notice,
+			preview,
+			saveButton,
+			onGenerated( base64Data, mimeType ) {
+				currentBase64 = base64Data;
+				currentMimeType = mimeType;
+			},
+		} );
+	} );
+
+	saveButton.addEventListener( 'click', () => {
+		if ( ! currentBase64 ) {
+			return;
+		}
+		handleSave( {
+			base64Data: currentBase64,
+			mimeType: currentMimeType,
+			button: saveButton,
 			notice,
 			preview,
 		} );
