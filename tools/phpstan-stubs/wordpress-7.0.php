@@ -5,12 +5,6 @@
  * @package Felix_Arntz\AI_Client_ImageGen
  */
 
-namespace WordPress\AiClient\Common\Contracts {
-
-	interface AiClientExceptionInterface extends \Throwable {
-	}
-}
-
 namespace WordPress\AiClient\Common {
 
 	abstract class AbstractEnum implements \JsonSerializable {
@@ -63,32 +57,6 @@ namespace WordPress\AiClient\Common {
 	 * @template TArrayShape of array<string, mixed>
 	 */
 	abstract class AbstractDataTransferObject implements \JsonSerializable {
-	}
-}
-
-namespace WordPress\AiClient\Common\Exception {
-
-	class RuntimeException extends \RuntimeException implements \WordPress\AiClient\Common\Contracts\AiClientExceptionInterface {
-	}
-
-	class InvalidArgumentException extends \InvalidArgumentException implements \WordPress\AiClient\Common\Contracts\AiClientExceptionInterface {
-	}
-
-	class TokenLimitReachedException extends RuntimeException {
-
-		/**
-		 * @param string          $message   The exception message.
-		 * @param int|null        $maxTokens The token limit that was reached.
-		 * @param \Throwable|null $previous  The previous throwable.
-		 */
-		public function __construct( string $message = '', ?int $maxTokens = null, ?\Throwable $previous = null ) {
-		}
-
-		/**
-		 * @return int|null
-		 */
-		public function getMaxTokens(): ?int {
-		}
 	}
 }
 
@@ -159,15 +127,12 @@ namespace WordPress\AiClient\Files\DTO {
 	}
 }
 
-namespace WordPress\AiClient\Providers\Http\Exception {
+namespace WordPress\AiClient\Results\DTO {
 
-	class NetworkException extends \WordPress\AiClient\Common\Exception\RuntimeException {
-	}
-
-	class ServerException extends \WordPress\AiClient\Common\Exception\RuntimeException {
-	}
-
-	class ClientException extends \WordPress\AiClient\Common\Exception\InvalidArgumentException {
+	/**
+	 * @extends \WordPress\AiClient\Common\AbstractDataTransferObject<array<string, mixed>>
+	 */
+	class GenerativeAiResult extends \WordPress\AiClient\Common\AbstractDataTransferObject {
 	}
 }
 
@@ -216,15 +181,9 @@ namespace {
 		}
 
 		/**
-		 * @return \WordPress\AiClient\Files\DTO\File
-		 * @throws \WordPress\AiClient\Common\Exception\TokenLimitReachedException
-		 * @throws \WordPress\AiClient\Providers\Http\Exception\NetworkException
-		 * @throws \WordPress\AiClient\Providers\Http\Exception\ServerException
-		 * @throws \WordPress\AiClient\Providers\Http\Exception\ClientException
-		 * @throws \WordPress\AiClient\Common\Exception\InvalidArgumentException
-		 * @throws \Exception
+		 * @return \WordPress\AiClient\Results\DTO\GenerativeAiResult
 		 */
-		public function generate_image(): \WordPress\AiClient\Files\DTO\File {
+		public function generate_image_result(): \WordPress\AiClient\Results\DTO\GenerativeAiResult {
 		}
 	}
 

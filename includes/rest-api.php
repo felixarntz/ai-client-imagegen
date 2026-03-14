@@ -112,7 +112,6 @@ function aicig_rest_generate_image( WP_REST_Request $request ) {
 	// phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 	$image_file = null;
-
 	if ( $attachment_id ) {
 		$file_path = get_attached_file( $attachment_id );
 		if ( ! $file_path || ! file_exists( $file_path ) ) {
@@ -125,7 +124,7 @@ function aicig_rest_generate_image( WP_REST_Request $request ) {
 		$base64_data = base64_encode( (string) file_get_contents( $file_path ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode,WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$image_file  = new File( $base64_data, (string) get_post_mime_type( $attachment_id ) );
 	} elseif ( $image_base64 ) {
-		$image_file = new File( $image_base64, 'image/png' );
+		$image_file = new File( $image_base64, 'image/png' ); // Not ideal, but PNG is a fair assumption based on how most AI providers generate images.
 	}
 
 	if ( $image_file ) {
@@ -134,29 +133,8 @@ function aicig_rest_generate_image( WP_REST_Request $request ) {
 		$builder = aicig_get_image_generation_prompt( $prompt, $orientation ?? '' );
 	}
 
-	try {
-		$file = $builder->generate_image();
-	} catch ( TokenLimitReachedException $e ) {
-		return new WP_Error( 'ai_token_limit_exceeded', $e->getMessage(), array( 'status' => 400 ) );
-	} catch ( NetworkException $e ) {
-		return new WP_Error( 'ai_network_error', $e->getMessage(), array( 'status' => 502 ) );
-	} catch ( ServerException $e ) {
-		$status = $e->getCode() ? $e->getCode() : 502;
-		return new WP_Error( 'ai_upstream_server_error', $e->getMessage(), array( 'status' => $status ) );
-	} catch ( ClientException $e ) {
-		$status = $e->getCode() ? $e->getCode() : 400;
-		return new WP_Error( 'ai_client_error', $e->getMessage(), array( 'status' => $status ) );
-	} catch ( InvalidArgumentException $e ) {
-		return new WP_Error( 'ai_invalid_argument', $e->getMessage(), array( 'status' => 400 ) );
-	} catch ( Exception $e ) {
-		return new WP_Error( 'ai_generate_error', $e->getMessage(), array( 'status' => 500 ) );
-	}
-
 	return rest_ensure_response(
-		array(
-			'data'      => $file->getBase64Data(),
-			'mime_type' => $file->getMimeType(),
-		)
+		$builder->generate_image_result()
 	);
 }
 
