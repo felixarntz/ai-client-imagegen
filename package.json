@@ -4,6 +4,7 @@
 	"license": "GPL-2.0-or-later",
 	"repository": "git+https://github.com/felixarntz/ai-client-imagegen.git",
 	"dependencies": {
+		"@wordpress/api-fetch": "^7.41.0",
 		"@wordpress/i18n": "^6.14.0"
 	},
 	"devDependencies": {

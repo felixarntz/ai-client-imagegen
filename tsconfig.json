@@ -1,24 +1,18 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig.json",
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "target": "esnext",
-    "module": "esnext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "strict": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "esModuleInterop": false
-  },
-  "exclude": [
-    "opensrc"
-  ]
+	"$schema": "https://json.schemastore.org/tsconfig.json",
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"jsx": "react-jsx",
+		"target": "esnext",
+		"module": "esnext",
+		"lib": [ "dom", "dom.iterable", "esnext" ],
+		"strict": true,
+		"noEmit": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"esModuleInterop": false
+	},
+	"exclude": [ "opensrc" ]
 }
