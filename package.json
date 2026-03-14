@@ -3,9 +3,9 @@
 	"private": true,
 	"license": "GPL-2.0-or-later",
 	"repository": "git+https://github.com/felixarntz/ai-client-imagegen.git",
-	"workspaces": [
-		"packages/*"
-	],
+	"dependencies": {
+		"@wordpress/i18n": "^6.14.0"
+	},
 	"devDependencies": {
 		"@wordpress/env": "^10.27.0",
 		"@wordpress/scripts": "^31.0.0",
