@@ -12,6 +12,14 @@ npm install
 npm run build
 ```
 
+### For Better Coding Agent Support
+
+```bash
+npm install -g agent-browser
+agent-browser install
+npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser -g
+```
+
 ## Installation
 
 Make sure you're using WordPress 7.0 or higher.

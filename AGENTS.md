@@ -15,6 +15,14 @@ It allows generating and editing images in the WordPress media library.
 - `composer phpcbf` — Auto-fix code style issues
 - `composer phpstan` — Run PHPStan static analysis
 
+## Browser Usage & Debugging
+
+You may have access to the `agent-browser` CLI tool, which allows you to access the browser. Run `which agent-browser` to verify. If so, you can use the plugin directly and debug any problems.
+
+As long as the built-in WordPress environment is running, you can access the relevant local WordPress site with the plugin active at `http://localhost:8888`. Login credentials are `admin` and `password`.
+
+Use the relevant `agent-browser` skill to learn how to use the CLI tool.
+
 <!-- opensrc:start -->
 
 ## Source Code Reference
