@@ -529,7 +529,14 @@ if ( ! anchorButton ) {
 	let currentBase64 = '';
 	let currentMimeType = '';
 
-	generateButton.addEventListener( 'click', () => {
+	/*
+	 * WordPress Core's media-grid.js binds a click handler to all
+	 * `.page-title-action` elements to toggle the upload drop zone.
+	 * Stopping immediate propagation prevents that handler from firing
+	 * on this custom button while keeping the class for its styling.
+	 */
+	generateButton.addEventListener( 'click', ( event: MouseEvent ) => {
+		event.stopImmediatePropagation();
 		dialog.showModal();
 	} );
 
