@@ -5,12 +5,7 @@
  * @package Felix_Arntz\AI_Client_ImageGen
  */
 
-use WordPress\AiClient\Common\Exception\InvalidArgumentException;
-use WordPress\AiClient\Common\Exception\TokenLimitReachedException;
 use WordPress\AiClient\Files\DTO\File;
-use WordPress\AiClient\Providers\Http\Exception\ClientException;
-use WordPress\AiClient\Providers\Http\Exception\NetworkException;
-use WordPress\AiClient\Providers\Http\Exception\ServerException;
 
 /**
  * Registers REST API routes for image generation and uploading.
