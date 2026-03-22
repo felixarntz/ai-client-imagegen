@@ -26,28 +26,21 @@ function aicig_register_rest_routes(): void {
 			},
 			'args'                => array(
 				'prompt'        => array(
-					'type'              => 'string',
-					'required'          => true,
-					'sanitize_callback' => 'sanitize_text_field',
-					'validate_callback' => static function ( $value ) {
-						return is_string( $value ) && '' !== trim( $value );
-					},
+					'type'     => 'string',
+					'required' => true,
 				),
 				'image_base64'  => array(
-					'type'              => 'string',
-					'required'          => false,
-					'sanitize_callback' => 'sanitize_text_field',
+					'type'     => 'string',
+					'required' => false,
 				),
 				'attachment_id' => array(
-					'type'              => 'integer',
-					'required'          => false,
-					'sanitize_callback' => 'absint',
+					'type'     => 'integer',
+					'required' => false,
 				),
 				'orientation'   => array(
-					'type'              => 'string',
-					'required'          => false,
-					'enum'              => array( 'square', 'landscape', 'portrait' ),
-					'sanitize_callback' => 'sanitize_text_field',
+					'type'     => 'string',
+					'required' => false,
+					'enum'     => array( 'square', 'landscape', 'portrait' ),
 				),
 			),
 		)
